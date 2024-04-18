@@ -91,66 +91,65 @@
 
 <?php
 
-// Function to generate CSV file with the given number of records
+
 function generateCSV($numRecords, $names, $surnames) {
-    // Specify the output folder
+    
     $outputFolder = 'output/';
 
-    // Create the output folder if it doesn't exist
+    
     if (!file_exists($outputFolder)) {
-        mkdir($outputFolder, 0777, true); // Create output folder recursively
+        mkdir($outputFolder, 0777, true); // output folder 
     }
 
-    // Open the CSV file for writing in the output folder
+    
     $filePath = $outputFolder . 'output.csv';
     $file = fopen($filePath, 'w');
 
-    // Write the header fields
+    // header fields
     fputcsv($file, array('Id', 'Name', 'Surname', 'Initials', 'Age', 'DateOfBirth'));
 
-    // Initialize an associative array to keep track of generated records
+  
     $generatedRecords = [];
 
-    // Generate random data for each record
+    // random data gen
     for ($i = 1; $i <= $numRecords; $i++) {
-        // Generate a unique record
+       
         do {
-            $name = $names[array_rand($names)]; // Pick a random name
-            $surname = $surnames[array_rand($surnames)]; // Pick a random surname
-            $initials = substr($name, 0, 1); // Extract the first character as initials
-            $age = mt_rand(18, 70); // Generate a random age between 18 and 70
-            $dob = date('d/m/Y', mt_rand(strtotime('01-01-1950'), strtotime('now'))); // Generate a random date of birth
+            $name = $names[array_rand($names)]; 
+            $surname = $surnames[array_rand($surnames)]; 
+            $initials = substr($name, 0, 1); 
+            $age = mt_rand(18, 70); 
+            $dob = date('d/m/Y', mt_rand(strtotime('01-01-1950'), strtotime('now'))); 
             $record = array($i, $name, $surname, $initials, $age, $dob);
-            $recordHash = md5(serialize($record)); // Calculate hash of the record
+            $recordHash = md5(serialize($record)); // hash for faster csv file generation
 
             // Check if the record already exists
             if (!isset($generatedRecords[$recordHash])) {
-                // Write the record to the CSV file
+                
                 fputcsv($file, $record);
 
-                // Add the generated record to the hash set
+                // Add record to hash set
                 $generatedRecords[$recordHash] = true;
                 break;
             }
-        } while (true); // Loop until a unique record is generated
+        } while (true); 
     }
 
-    // Close the CSV file
+   
     fclose($file);
 
     return $filePath;
 }
 
-// Function to generate CSV file with the given number of records and save it
 function generateAndSaveCSV($numRecords) {
-    // Define arrays for names and surnames
+
     $names = ["John", "Emma", "Michael", "Sophia", "William", "Olivia", "James", "Ava", "Alexander", "Mia", "Daniel", "Charlotte", "Henry", "Amelia", "Joseph", "Isabella", "David", "Grace", "Samuel", "Ella"];
     $surnames = ["Smith", "Johnson", "Williams", "Jones", "Brown", "Davis", "Miller", "Wilson", "Moore", "Taylor", "Anderson", "Thomas", "Jackson", "White", "Harris", "Martin", "Thompson", "Garcia", "Martinez", "Robinson"];
 
-    // Call generateCSV function to generate CSV file
+   
     $generatedFile = generateCSV($numRecords, $names, $surnames);
 
-    // Return the path of the generated CSV file
+    // path of the generated CSV file
     return $generatedFile;
 }
 

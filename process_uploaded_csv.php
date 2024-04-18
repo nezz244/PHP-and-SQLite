@@ -25,15 +25,15 @@
 
                     $conn->close();
 
-                    // Create a new connection to the test2 database
+                    
                     $conn = new mysqli($servername, $username, $password, "test2");
 
-                    // Check connection
+                
                     if ($conn->connect_error) {
                         die("Connection failed: " . $conn->connect_error);
                     }
 
-        // Create table if it doesn't exist
+     
         $sql = "CREATE TABLE IF NOT EXISTS csv_import (
                     id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
                     name VARCHAR(30) NOT NULL,
@@ -47,27 +47,26 @@
             echo "Error creating table: " . $conn->error;
         }
 
-        // Parse CSV file and insert data into the table
+        
         $csvFile = fopen($_FILES["csvFile"]["tmp_name"], "r");
 
-        // Begin transaction
         $conn->begin_transaction();
 
         $count = 0;
-        $batchSize = 100; // Number of records to insert in each batch
+        $batchSize = 100; 
         $batchValues = array(); // Array to store batch values
         while (($data = fgetcsv($csvFile)) !== false) {
             if ($count > 0) { // Skip header row
-                // Extract data from CSV row
+              
                 $name = $data[1];
                 $surname = $data[2];
                 $initials = $data[3];
                 $age = intval($data[4]);
-                $dob = DateTime::createFromFormat('d/m/Y', $data[5]); // Parse date from CSV
+                $dob = DateTime::createFromFormat('d/m/Y', $data[5]); 
 
                 if ($dob !== false) {
                     $dobFormatted = $dob->format('d/m/Y'); // Format date as dd/mm/yyyy
-                    // Prepare batch values
+                    
                     $batchValues[] = "('$name', '$surname', '$initials', $age, '$dobFormatted')";
                 } else {
                     echo "Invalid date format for record: " . implode(', ', $data) . "<br>";
@@ -77,7 +76,7 @@
 
             // Check if batch size is reached or end of file is reached
             if (count($batchValues) == $batchSize || feof($csvFile)) {
-                // Execute batch insert query
+                
                 $sql = "INSERT INTO csv_import (name, surname, initials, age, date_of_birth) VALUES " . implode(',', $batchValues);
                 if ($conn->query($sql) === FALSE) {
                     echo "Error inserting records: " . $conn->error;
@@ -87,13 +86,13 @@
             }
         }
 
-        // Commit transaction
+       
         $conn->commit();
 
-        // Close CSV file
+        
         fclose($csvFile);
 
-        // Close database connection
+        
         $conn->close();
 
         echo "Number of records inserted: " . ($count - 1); 
