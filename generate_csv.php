@@ -44,6 +44,24 @@
         .input-group button:hover {
             background-color: #45a049;
         }
+        .upload-btn {
+            margin-top: 20px;
+        }
+        .redirect-btn {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 8px 20px;
+            background-color: #3498db;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            text-decoration: none;
+        }
+        .redirect-btn:hover {
+            background-color: #2980b9;
+        }
     </style>
 </head>
 <body>
@@ -55,20 +73,21 @@
                 <input type="number" id="numRecords" name="numRecords" min="1" value="100">
             </div>
             <div class="input-group">
-                <button type="submit" name="generate">Generate CSV</button>
+                <button type="submit" name="generate" class="upload-btn">Generate CSV</button>
             </div>
         </form>
         <?php
         if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['generate'])) {
             $numRecords = $_POST['numRecords'];
             $generatedFile = generateAndSaveCSV($numRecords);
-            //echo "<p>CSV file generated: <a href='$generatedFile'>$generatedFile</a></p>";
-            echo "<p>CSV file generated: <a href='redirect.php?file=$generatedFile'>$generatedFile</a></p>";
+            echo "<p>CSV file generated: <a href='$generatedFile'>$generatedFile</a></p>";
         }
         ?>
+        <a href="upload_csv.php" class="redirect-btn">Go to Upload Page</a>
     </div>
 </body>
 </html>
+
 
 <?php
 
