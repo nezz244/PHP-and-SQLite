@@ -95,47 +95,30 @@
 function generateCSV($numRecords, $names, $surnames) {
     
     $outputFolder = 'output/';
-
     
     if (!file_exists($outputFolder)) {
-        mkdir($outputFolder, 0777, true); // output folder 
+        mkdir($outputFolder, 0777, true); // Create output folder if it doesn't exist
     }
-
     
     $filePath = $outputFolder . 'output.csv';
     $file = fopen($filePath, 'w');
 
-    // header fields
-    fputcsv($file, array('Id', 'Name', 'Surname', 'Initials', 'Age', 'DateOfBirth'));
+    // Write header fields
+    fputcsv($file, array("Id", "Name", "Surname", "Initials", "Age", "DateOfBirth"));
 
-  
-    $generatedRecords = [];
-
-    // random data gen
+    // Loop to generate random data
     for ($i = 1; $i <= $numRecords; $i++) {
-       
-        do {
-            $name = $names[array_rand($names)]; 
-            $surname = $surnames[array_rand($surnames)]; 
-            $initials = substr($name, 0, 1); 
-            $age = mt_rand(18, 70); 
-            $dob = date('d/m/Y', mt_rand(strtotime('01-01-1950'), strtotime('now'))); 
-            $record = array($i, $name, $surname, $initials, $age, $dob);
-            $recordHash = md5(serialize($record)); // hash for faster csv file generation
-
-            // Check if the record already exists
-            if (!isset($generatedRecords[$recordHash])) {
-                
-                fputcsv($file, $record);
-
-                // Add record to hash set
-                $generatedRecords[$recordHash] = true;
-                break;
-            }
-        } while (true); 
+        // Generate random data
+        $name = $names[array_rand($names)]; 
+        $surname = $surnames[array_rand($surnames)]; 
+        $initials = substr($name, 0, 1); 
+        $age = mt_rand(18, 70); 
+        $dob = date('d/m/Y', mt_rand(strtotime('01-01-1950'), strtotime('now'))); 
+        
+        // Write record to CSV file
+        fputcsv($file, array("'$i'", "'$name'", "'$surname'", "'$initials'", "'$age'", "'$dob'"));
     }
 
-   
     fclose($file);
 
     return $filePath;
