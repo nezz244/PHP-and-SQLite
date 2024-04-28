@@ -34,15 +34,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['upload'])) {
 
             while (($data = fgetcsv($csvFile)) !== false) {
                 if ($count > 0) { // Skip header row
-                    $name = $db->escapeString($data[1]);
-                    $surname = $db->escapeString($data[2]);
-                    $initials = $db->escapeString($data[3]);
-                    $age = intval($data[4]);
+                    $name = $db->escapeString(trim($data[1], "'\"")); // Strip single and double quotes
+                    $surname = $db->escapeString(trim($data[2], "'\""));
+                    $initials = $db->escapeString(trim($data[3], "'\""));
+                    $age = trim($data[4], "'\"");
                     $dob = DateTime::createFromFormat("'d/m/Y'", $data[5]); 
                     
 
                     if ($dob !== false) {
-                        $dobFormatted = $dob->format('d/m/Y'); // Format date as dd/mm/yyyy
+                         $dobFormatted = $dob->format('Y-m-d'); // ISO 8601 format
+
                         
                         $batchValues[] = "('$name', '$surname', '$initials', $age, '$dobFormatted')";
                     } else {

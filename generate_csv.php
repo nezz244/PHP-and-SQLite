@@ -88,18 +88,13 @@
 </body>
 </html>
 
-
 <?php
-
-
+//use DateTime;
 function generateCSV($numRecords, $names, $surnames) {
-    
     $outputFolder = 'output/';
-    
     if (!file_exists($outputFolder)) {
         mkdir($outputFolder, 0777, true); // Create output folder if it doesn't exist
     }
-    
     $filePath = $outputFolder . 'output.csv';
     $file = fopen($filePath, 'w');
 
@@ -109,30 +104,32 @@ function generateCSV($numRecords, $names, $surnames) {
     // Loop to generate random data
     for ($i = 1; $i <= $numRecords; $i++) {
         // Generate random data
-        $name = $names[array_rand($names)]; 
-        $surname = $surnames[array_rand($surnames)]; 
-        $initials = substr($name, 0, 1); 
-        $age = mt_rand(18, 70); 
-        $dob = date('d/m/Y', mt_rand(strtotime('01-01-1950'), strtotime('now'))); 
-        
+        $name = $names[array_rand($names)];
+        $surname = $surnames[array_rand($surnames)];
+        $initials = substr($name, 0, 1);
+
+        // Generate a random DOB between 1950 and now
+        $dobTimestamp = mt_rand(strtotime('01-01-1950'), strtotime('now'));
+        $dob = date('d/m/Y', $dobTimestamp);
+
+        // Calculate the age from DOB
+        $dobDateTime = new DateTime(date('Y-m-d', $dobTimestamp));
+        $currentDate = new DateTime();
+        $ageInterval = $currentDate->diff($dobDateTime);
+        $age = $ageInterval->y; // Get the number of complete years between DOB and today
+
         // Write record to CSV file
         fputcsv($file, array("'$i'", "'$name'", "'$surname'", "'$initials'", "'$age'", "'$dob'"));
     }
 
     fclose($file);
-
     return $filePath;
 }
 
 function generateAndSaveCSV($numRecords) {
-
     $names = ["John", "Emma", "Michael", "Sophia", "William", "Olivia", "James", "Ava", "Alexander", "Mia", "Daniel", "Charlotte", "Henry", "Amelia", "Joseph", "Isabella", "David", "Grace", "Samuel", "Ella"];
     $surnames = ["Smith", "Johnson", "Williams", "Jones", "Brown", "Davis", "Miller", "Wilson", "Moore", "Taylor", "Anderson", "Thomas", "Jackson", "White", "Harris", "Martin", "Thompson", "Garcia", "Martinez", "Robinson"];
 
-   
     $generatedFile = generateCSV($numRecords, $names, $surnames);
-
-    // path of the generated CSV file
     return $generatedFile;
 }
-
